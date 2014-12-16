@@ -1,0 +1,26 @@
+{
+	"keywords" : [
+		"radical-php"
+	],
+	"autoload" : {
+		"psr-0" : {
+			"Radical" : "src"
+		}
+	},
+	"name" : "splitice/radical-mail",
+	"type" : "library",
+	"description" : "mail support for radical-php",
+	"require" : {
+		"php" : ">=5.4",
+		"splitice/radical-common" : "dev-master",
+		"splitice/radical-basic" : "dev-master",
+        "html2text/html2text": "dev-master"
+	},
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/splitice/html2text"
+        }
+    ],
+	"minimum-stability" : "dev"
+}
