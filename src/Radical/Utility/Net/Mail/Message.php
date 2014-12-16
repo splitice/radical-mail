@@ -1,6 +1,7 @@
 <?php
 namespace Radical\Utility\Net\Mail;
 
+use Html2Text\Html2Text;
 use Radical\Core\IRenderToString;
 use Radical\Utility\Net\Mail\Handler;
 
@@ -17,6 +18,36 @@ class Message {
 	private $html = false;
 	private $headers;
     private $body;
+    private $altBody;
+
+    /**
+     * @return string
+     */
+    public function getAltBody()
+    {
+        return $this->altBody;
+    }
+
+    /**
+     * @param string $altBody
+     */
+    public function setAltBody($altBody, $is_html = false)
+    {
+        $this->altBody = self::body($altBody);
+        if($is_html){
+            $h2t = new Html2Text($this->altBody);
+            $this->altBody = $h2t->get_text();
+        }
+    }
+
+    function textBody(){
+        if($this->altBody){
+            return $this->altBody;
+        }
+
+        $h2t = new Html2Text($this->getBody());
+        return $h2t->get_text();
+    }
 
     /**
      * @return string
@@ -126,6 +157,9 @@ class Message {
 	}
 	
 	static function body($body){
+        if($body === null){
+            return null;
+        }
 		if($body instanceof IRenderToString){
 			return $body->renderString();
 		}else{
