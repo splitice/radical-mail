@@ -8,5 +8,5 @@ interface IMailHandler {
      * @param $body
      * @return bool success status
      */
-    function send(Message $message,$body);
+    function send(Message $message);
 }

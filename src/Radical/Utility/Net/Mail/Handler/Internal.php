@@ -3,7 +3,8 @@ namespace Radical\Utility\Net\Mail\Handler;
 use Radical\Utility\Net\Mail\Message;
 
 class Internal implements IMailHandler {
-	function send(Message $message,$body){
+	function send(Message $message){
+        $body = $message->getBody();
 		$headers = '';
 		
 		// To send HTML mail, the Content-type header must be set

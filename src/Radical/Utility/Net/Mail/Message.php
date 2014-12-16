@@ -16,6 +16,23 @@ class Message {
 	private $reply_to;
 	private $html = false;
 	private $headers;
+    private $body;
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param mixed $body
+     */
+    public function setBody($body)
+    {
+        $this->body = self::body($body);
+    }
 	
 	/**
 	 * @return array $headers
@@ -117,12 +134,10 @@ class Message {
 	}
 
     /**
-     * @param $body
      * @return bool success status
      */
-    function send($body){
-		$body = self::body($body);
-		$this->handler->setHeaders($this->headers);
-		return $this->handler->Send($this,$body);
+    function send(){
+		//$this->handler->setHeaders($this->headers);
+		return $this->handler->Send($this);
 	}
 }

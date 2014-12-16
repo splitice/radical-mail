@@ -92,7 +92,7 @@ class SMTP implements IMailHandler {
 	}
 	
 	/* send the email message */
-	function send(Message $m, $message) {
+	function send(Message $m) {
 		if(!$this->isLogin){
 			if (! $this->connect ())
 				return;
@@ -100,7 +100,7 @@ class SMTP implements IMailHandler {
 				return;
 			$this->isLogin = true;
 		}
-		
+        $message = $m->getBody();
 		$from = $m->getFrom ();
 		$to = $m->getTo ();
 		$subject = $m->getSubject ();
