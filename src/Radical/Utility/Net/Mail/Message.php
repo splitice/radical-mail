@@ -19,6 +19,23 @@ class Message {
 	private $headers;
     private $body;
     private $altBody;
+    private $attachments = array();
+
+    /**
+     * @return array
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    function addAttachment($file, $name = null){
+        if($name === null) {
+            $this->attachments[] = $file;
+        }else{
+            $this->attachments[$name] = $file;
+        }
+    }
 
     /**
      * @return string
@@ -171,7 +188,6 @@ class Message {
      * @return bool success status
      */
     function send(){
-		//$this->handler->setHeaders($this->headers);
 		return $this->handler->Send($this);
 	}
 }
