@@ -188,6 +188,9 @@ class Message {
      * @return bool success status
      */
     function send(){
+        if(!$this->handler){
+            return null;
+        }
 		return $this->handler->Send($this);
 	}
 }

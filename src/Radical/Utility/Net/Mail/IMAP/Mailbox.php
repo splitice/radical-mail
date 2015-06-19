@@ -2,6 +2,7 @@
 namespace Radical\Utility\Net\Mail\IMAP;
 
 use Radical\Utility\Net\Mail\IMAP;
+
 class Mailbox {
 	private $con;
 	private $mailbox;
