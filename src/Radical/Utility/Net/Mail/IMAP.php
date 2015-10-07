@@ -157,7 +157,10 @@ class IMAP
 
     function fetch_overview($msg_num)
     {
-        return array_pop(imap_fetch_overview($this->con, $msg_num));
+        $ret = imap_fetch_overview($this->con, $msg_num);
+        if($ret){
+            return $ret[0];
+        }
     }
 
     function set_flag($msg, $flag)
