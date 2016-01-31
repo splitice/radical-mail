@@ -67,7 +67,7 @@ class IMAP
 
         // BODY
         $s = imap_fetchstructure($this->con, $mid);
-        if (!$s->parts)  // simple
+        if (empty($s->parts))  // simple
             $this->get_part($ret, $mid, $s, 0);  // pass 0 as part-number
         else {  // multipart: cycle through each part
             foreach ($s->parts as $partno0 => $p)
@@ -105,9 +105,9 @@ class IMAP
         // ATTACHMENT
         // Any part with a filename is an attachment,
         // so an attached text file (type 0) is not mistaken as the message.
-        if ($params['filename'] || $params['name']) {
+        if (!empty($params['filename']) || !empty($params['name'])) {
             // filename may be given as 'Filename' or 'Name' or both
-            $filename = ($params['filename']) ? $params['filename'] : $params['name'];
+            $filename = empty($params['filename']) ? $params['name'] : $params['filename'];
             // filename may be encoded, so see imap_mime_header_decode()
             $ret->attachments[$filename] = $data;  // this is a problem if two files have same name
         }
@@ -133,7 +133,7 @@ class IMAP
         }
 
         // SUBPART RECURSION
-        if ($p->parts) {
+        if (!empty($p->parts)) {
             foreach ($p->parts as $partno0 => $p2) {
 
                 $subpart = new \stdClass();
