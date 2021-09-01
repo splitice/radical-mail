@@ -4,6 +4,8 @@ namespace Radical\Utility\Net\Mail;
 class IMAP
 {
     private $con;
+    private $username;
+    private $password;
 
     function __construct($hostname, $username, $password)
     {
@@ -12,15 +14,30 @@ class IMAP
 
     function open($hostname, $username, $password)
     {
-        $this->con = imap_open($hostname, $username, $password);
-        if (!$this->con) {
+        if(!$this->con || $this->username = $username || $this->password != $password){
+            $result = $this->con = @imap_open($hostname, $username, $password);
+            $this->username = $username;
+            $this->password = $password;
+        }else{
+            $result = @imap_reopen($this->con, $hostname);
+            if(!$result){
+                @imap_close($this->con);
+                $result = $this->con = @imap_open($hostname, $username, $password);
+            }
+        }
+        if (!$result) {
             throw new \Exception("Unable to open connection to: " . $hostname . ' error: ' . imap_last_error());
         }
     }
 
+    function ping(){
+        if(!$this->con) return false;
+        return @imap_ping($this->con);
+    }
+
     function close()
     {
-        imap_close($this->con);
+        @imap_close($this->con);
         $this->con = null;
     }
 
@@ -53,7 +70,12 @@ class IMAP
     function get_mailboxes($ref, $pattern = '*')
     {
         $ret = array();
-        foreach (imap_list($this->con, $ref, $pattern) as $mb) {
+        $mailboxes = imap_list($this->con, $ref, $pattern);
+        if($mailboxes===false){
+            $this->close();
+            throw new \Exception("Unable to open list mailboxes due to error: " . imap_last_error());
+        }
+        foreach ($mailboxes as $mb) {
             $ret[] = $this->get_mailbox($mb);
         }
         return $ret;
@@ -67,6 +89,11 @@ class IMAP
 
         // BODY
         $s = imap_fetchstructure($this->con, $mid);
+
+        $ret->parameters = array();
+        foreach ($s->parameters as $x)
+            $ret->parameters[strtolower($x->attribute)] = $x->value;
+
         if (empty($s->parts))  // simple
             $this->get_part($ret, $mid, $s, 0);  // pass 0 as part-number
         else {  // multipart: cycle through each part
@@ -120,7 +147,9 @@ class IMAP
                 $ret->plainmsg .= trim($data) . "\n\n";
             else
                 $ret->htmlmsg .= $data . "<br><br>";
-            $ret->charset = $params['charset'];  // assume all parts are same charset
+            if(isset($params['charset'])) {
+                $ret->charset = $params['charset'];  // assume all parts are same charset
+            }
         }
 
         // EMBEDDED MESSAGE
